@@ -21,13 +21,20 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 #[ApiResource(
-    input: BookInput::class,
-    output: BookOutput::class,
     security: "is_granted('ROLE_USER')",
     operations: [
         new GetCollection(),
-        new Post(),
-        new Get(),
+        new Post(
+            input: 
+            [
+            'class' => BookInput::class,
+            'transformer' => BookInputDataTransformer::class
+            ]
+        ),
+        new Get(
+            output: BookOutput::class, 
+            provider: BookOutputProvider::class
+        ),
         new GetCollection(
             uriTemplate: '/books/recent',
             controller: RecentBooksController::class,
